@@ -49,15 +49,10 @@ def write_to_file(text_to_write, erase=False):
         print("\n")
 
 
-df = pd.read_csv(
-    "output/input_cohort.csv",
+df = pd.read_stata(
+    "output/input_cohort.dta",
     index_col="patient_id",
-    parse_dates=[
-        "first_long_covid_date",
-        "sgss_positive",
-        "primary_care_covid",
-        "hospital_covid",
-    ],
+    convert_categoricals=False
 )
 
 # Find first COVID date

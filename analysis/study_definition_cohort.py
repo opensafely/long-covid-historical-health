@@ -55,7 +55,7 @@ study = StudyDefinition(
         previous_covid != '0'
         """,
         has_follow_up=patients.registered_with_one_practice_between(
-            "index_date", "index_date - 1 year"
+            "2019-12-01", "2020-12-01"
         ),
     ),
     # COVID infection
