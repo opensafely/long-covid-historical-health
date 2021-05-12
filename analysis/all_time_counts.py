@@ -50,7 +50,7 @@ def write_to_file(text_to_write, erase=False):
 
 
 df = pd.read_stata(
-    "output/input_cohort.dta",
+    "output/input.dta",
     index_col="patient_id",
     convert_categoricals=False
 )

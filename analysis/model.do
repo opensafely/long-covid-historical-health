@@ -1,14 +1,8 @@
 global projectdir `c(pwd)'
 di "$projectdir"
+global population `1'
 
-global logdir "$projectdir/logs"
-di "$logdir"
-
-* Open a log file
-cap log close
-log using "$logdir/models.log", replace
-
-use output/input_cohort.dta, clear
+use output/input$population.dta, clear
 
 egen comorbidities = rowtotal(diabetes cancer haem_cancer asthma ///
     chronic_respiratory_disease chronic_cardiac_disease chronic_liver_disease ///
@@ -67,7 +61,6 @@ postclose `logistic_table'
 * Change postfiles to csv
 use $projectdir/output/model_summary, replace
 
-export delimited using $projectdir/output/model_summary.csv, replace
+export delimited using $projectdir/output/model_summary$population.csv, replace
 
-log close
 exit, STATA clear
