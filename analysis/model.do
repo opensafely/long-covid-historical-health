@@ -26,10 +26,20 @@ global model_3 i.age_group i.sex i.ethnicity
 global model_4 i.age_group i.sex i.ethnicity i.imd
 global model_5 i.age_group i.sex i.ethnicity i.imd i.bmi ///i.smoking
 
-// foreach variable in age_group sex bmi {
-//     rename `variable' `variable'_temp
-//     encode `variable'_temp, generate(`variable')
-// }
+foreach variable in age_group bmi {
+    rename `variable' `variable'_temp
+    encode `variable'_temp, generate(`variable')
+    drop `variable'_temp
+}
+
+rename sex sex_temp
+generate sex = 0 if sex_temp == "M"
+recode sex . = 1
+label define sex 0 "M" 1 "F"
+lab values sex sex
+
+destring ethnicity imd, replace
+replace imd = 9 if imd == 0
 
 tempname logistic_table
 postfile `logistic_table' str20(model) str20(category) or stde ll ul ///
