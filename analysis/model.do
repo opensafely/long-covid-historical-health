@@ -72,5 +72,3 @@ postclose `logistic_table'
 use $projectdir/output/model_summary, replace
 
 export delimited using $projectdir/output/model_summary$population.csv, replace
-
-exit, STATA clear
