@@ -1,14 +1,8 @@
 global projectdir `c(pwd)'
 di "$projectdir"
+global population `1'
 
-global logdir "$projectdir/logs"
-di "$logdir"
-
-* Open a log file
-cap log close
-log using "$logdir/models.log", replace
-
-use output/input_cohort.dta, clear
+use output/input$population.dta, clear
 
 egen comorbidities = rowtotal(diabetes cancer haem_cancer asthma ///
     chronic_respiratory_disease chronic_cardiac_disease chronic_liver_disease ///
@@ -32,10 +26,20 @@ global model_3 i.age_group i.sex i.ethnicity
 global model_4 i.age_group i.sex i.ethnicity i.imd
 global model_5 i.age_group i.sex i.ethnicity i.imd i.bmi ///i.smoking
 
-// foreach variable in age_group sex bmi {
-//     rename `variable' `variable'_temp
-//     encode `variable'_temp, generate(`variable')
-// }
+foreach variable in age_group bmi {
+    rename `variable' `variable'_temp
+    encode `variable'_temp, generate(`variable')
+    drop `variable'_temp
+}
+
+rename sex sex_temp
+generate sex = 0 if sex_temp == "M"
+recode sex . = 1
+label define sex 0 "M" 1 "F"
+lab values sex sex
+
+destring ethnicity imd, replace
+replace imd = 9 if imd == 0
 
 tempname logistic_table
 postfile `logistic_table' str20(model) str20(category) or stde ll ul ///
@@ -67,7 +71,4 @@ postclose `logistic_table'
 * Change postfiles to csv
 use $projectdir/output/model_summary, replace
 
-export delimited using $projectdir/output/model_summary.csv, replace
-
-log close
-exit, STATA clear
+export delimited using $projectdir/output/model_summary$population.csv, replace

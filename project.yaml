@@ -1,15 +1,15 @@
 version: '3.0'
 
 expectations:
-  population_size: 2000
+  population_size: 5000
 
 actions:
 
   generate_cohort:
-    run: cohortextractor:latest generate_cohort --study-definition study_definition_cohort --output-format dta
+    run: cohortextractor:latest generate_cohort --output-format dta
     outputs:
       highly_sensitive:
-        cohort: output/input_cohort.dta
+        cohort: output/input.dta
 
   count_by_strata:
     run: python:latest python analysis/all_time_counts.py
@@ -19,9 +19,30 @@ actions:
         table: output/counts_table.csv
 
   logistic_models:
-    run: stata-mp:latest analysis/model.do
+    run: stata-mp:latest analysis/model.do ""
     needs: [generate_cohort]
     outputs:
       moderately_sensitive:
         table: output/model_summary.csv
-        log: logs/models.log
+
+  select_cohorts:
+    run: stata-mp:latest analysis/select_cohorts.do ""
+    needs: [generate_cohort]
+    outputs:
+      moderately_sensitive:
+        cohort_before_may: output/input_before_may.dta
+        cohort_after_may: output/input_after_may.dta
+
+  logistic_models_before_may:
+    run: stata-mp:latest analysis/model.do "_before_may"
+    needs: [select_cohorts]
+    outputs:
+      moderately_sensitive:
+        table: output/model_summary_before_may.csv
+
+  logistic_models_after_may:
+    run: stata-mp:latest analysis/model.do "_after_may"
+    needs: [select_cohorts]
+    outputs:
+      moderately_sensitive:
+        table: output/model_summary_after_may.csv
