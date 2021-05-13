@@ -29,7 +29,7 @@ actions:
     run: stata-mp:latest analysis/select_cohorts.do ""
     needs: [generate_cohort]
     outputs:
-      moderately_sensitive:
+      highly_sensitive:
         cohort_before_may: output/input_before_may.dta
         cohort_after_may: output/input_after_may.dta
 
