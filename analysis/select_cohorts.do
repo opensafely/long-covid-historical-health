@@ -2,9 +2,12 @@ use output/input.dta, clear
 
 * Dates
 foreach variable in sgss_positive primary_care_covid hospital_covid {
-    rename `variable' `variable'_temp
-    gen `variable'= date(`variable'_temp,"YMD")
-    drop `variable'_temp
+	capture confirm string variable `variable'
+    if !_rc {
+	    rename `variable' `variable'_temp
+	    gen `variable'= date(`variable'_temp,"YMD")
+	    drop `variable'_temp
+	}
 }
 gen first_covid = min(sgss_positive, primary_care_covid, hospital_covid)
 
