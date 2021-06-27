@@ -83,6 +83,8 @@ stratifiers = list(demographic_variables.keys()) + [
     "bmi",
     "comorbidities",
     "mental_health",
+    "asthma",
+    "diabetes",
 ]
 crosstabs = [crosstab(df[v]) for v in stratifiers]
 all_together = pd.concat(
